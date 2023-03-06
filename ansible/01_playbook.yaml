@@ -1,0 +1,29 @@
+---
+- name: 'Pull and deploy WebApp image'
+  hosts: webservers
+  remote_user: azureuser
+  become: true
+  vars_files:
+    - vars/00_vars.yaml
+  tasks:
+    - name: Pull an webapp image
+      containers.podman.podman_image:
+          name: "{{ image_name }}"
+          tag: latest
+          #auth_file: /etc/containers/auth.json
+          username: "{{ username }}"
+          password: "{{ vault_registry_password }}"
+    - name: Re-create a container-web.service container with systemd service file generated in /etc/systemd/system/
+      containers.podman.podman_container:
+        name: container-web.service
+        image: "{{ image_name }}"
+        command: container-web.service --now
+        state: present
+        recreate: yes
+        generate_systemd:
+          path: /etc/systemd/system/
+          restart_policy: always
+          time: 120
+          names: true
+          container_prefix: container-web.service
+

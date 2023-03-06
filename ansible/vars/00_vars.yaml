@@ -1,0 +1,6 @@
+username: 'acrunir'
+package: 'podman'
+password: 'L3nu4Vyu4DLMrkMnK27x3NxfhH8MBBn63lGzISfbrP+ACRAOvKTR'
+registry: 'acrunir.azurecr.io'
+image_name: 'acrunir.azurecr.io/webapp'
+image_name_db: 'acrunir.azurecr.io/mongodb'

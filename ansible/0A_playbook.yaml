@@ -1,0 +1,13 @@
+---
+- name: 'login and push images'
+  hosts: webservers
+  remote_user: azureuser
+  become: true
+  vars_files:
+    - vars/00_vars.yaml
+  tasks:
+    - name: Login to default registry and create ${XDG_RUNTIME_DIR}/containers/auth.json
+      containers.podman.podman_login:
+        username: "{{ username }}"
+        password: "{{ password }}"
+        registry: "{{ registry }}"

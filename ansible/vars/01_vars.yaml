@@ -1,0 +1,15 @@
+k8s_namespace: "casopractico2-UNIR"
+directorio_trabajo: "/tmp"
+aplicacion:
+  definicion: "stateless.yaml"
+  backend:
+    nombre: app-mongodb
+    imagen: acrunir.azurecr.io/mongodb:latest
+    replicas: 1
+    recursos:
+      cpu: 100m
+      memoria: 128Mi
+    limites:
+      cpu: 250m
+      memoria: 256Mi
+    puerto: 27017
