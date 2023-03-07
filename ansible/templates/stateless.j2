@@ -1,45 +1,45 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ aplicacion.backend.nombre }}"
+  name: "{{ aplicacion.databases.nombre }}"
   namespace: "{{ k8s_namespace }}"
 spec:
-  replicas: {{ aplicacion.backend.replicas }}
+  replicas: {{ aplicacion.databases.replicas }}
   selector:
     matchLabels:
-      app: "{{ aplicacion.backend.nombre }}"
+      app: "{{ aplicacion.databases.nombre }}"
   template:
     metadata:
       labels:
-        app: "{{ aplicacion.backend.nombre }}"
+        app: "{{ aplicacion.databases.nombre }}"
     spec:
       nodeSelector:
         "kubernetes.io/os": linux
       containers:
-      - name: "{{ aplicacion.backend.nombre }}"
-        image: "{{ aplicacion.backend.imagen }}"
+      - name: "{{ aplicacion.databases.nombre }}"
+        image: "{{ aplicacion.databases.imagen }}"
         env:
         - name: ALLOW_EMPTY_PASSWORD
           value: "yes"
         resources:
           requests:
-            cpu: "{{ aplicacion.backend.recursos.cpu }}"
-            memory: "{{ aplicacion.backend.recursos.memoria }}"
+            cpu: "{{ aplicacion.databases.recursos.cpu }}"
+            memory: "{{ aplicacion.databases.recursos.memoria }}"
           limits:
-            cpu: "{{ aplicacion.backend.limites.cpu }}"
-            memory: "{{ aplicacion.backend.limites.memoria }}"
+            cpu: "{{ aplicacion.databases.limites.cpu }}"
+            memory: "{{ aplicacion.databases.limites.memoria }}"
         ports:
-        - containerPort: {{ aplicacion.backend.puerto }}
+        - containerPort: {{ aplicacion.databases.puerto }}
           name: redis
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ aplicacion.backend.nombre }}"
+  name: "{{ aplicacion.databases.nombre }}"
   namespace: "{{ k8s_namespace }}"
 spec:
   ports:
-  - port: {{ aplicacion.backend.puerto }}
+  - port: {{ aplicacion.databases.puerto }}
   selector:
-    app: "{{ aplicacion.backend.nombre }}"
+    app: "{{ aplicacion.databases.nombre }}"
 
