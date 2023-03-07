@@ -11,19 +11,26 @@
           name: "{{ image_name }}"
           tag: latest
           #auth_file: /etc/containers/auth.json
+          pull: yes
           username: "{{ username }}"
-          password: "{{ vault_registry_password }}"
-    - name: Re-create a container-web.service container with systemd service file generated in /etc/systemd/system/
+          password: "{{ password }}"
+    - name: Create container
       containers.podman.podman_container:
+          name: web
+          image: "{{ image_name }}"
+          ports:
+            - "8080:443"
+    - name: Create systemd script for created container
+      become: true
+      shell: podman generate systemd --name web > /etc/systemd/system/container-web.service
+    - name: Force systemd to reread configs
+      become: true
+      systemd: daemon_reload=yes
+    - name: Enable container service
+      become: true
+      systemd:
         name: container-web.service
-        image: "{{ image_name }}"
-        command: container-web.service --now
-        state: present
-        recreate: yes
-        generate_systemd:
-          path: /etc/systemd/system/
-          restart_policy: always
-          time: 120
-          names: true
-          container_prefix: container-web.service
+        enabled: true
+        state: started
+
 

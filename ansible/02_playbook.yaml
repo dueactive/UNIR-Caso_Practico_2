@@ -1,8 +1,8 @@
 ---
-- name: 'Pull and deploy MongoDB image'
+- name: 'Deploy MongoDB image + Kubernetes'
   hosts: localhost
   vars_files:
-    - vars/02_vars.yaml
+    - vars/01_vars.yaml
 
   tasks:
     - name: 'Definir los objectos deployment y servicios'
