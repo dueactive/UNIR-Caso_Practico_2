@@ -2,7 +2,7 @@ k8s_namespace: "casopractico2-UNIR"
 directorio_trabajo: "/tmp"
 aplicacion:
   definicion: "stateless.yaml"
-  backend:
+  databases:
     nombre: app-mongodb
     imagen: acrunir.azurecr.io/mongodb:latest
     replicas: 1
