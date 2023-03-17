@@ -42,7 +42,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   name                = "UbuntuVM"
   resource_group_name = azurerm_resource_group.rg-vm.name
   location            = azurerm_resource_group.rg-vm.location
-  size                = "Standard_F2"
+  size                = "Standard_B1s" #Standard_B1ms #Standard_DS1_v2 #Standard_F2
   admin_username      = "azureuser"
   network_interface_ids = [
     azurerm_network_interface.nic.id,
@@ -60,8 +60,8 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "16.04-LTS" #20.04
+    offer     = "0001-com-ubuntu-server-focal" #"UbuntuServer"
+    sku       = "20_04-lts-gen2" #20.04-LTS #16.04-LTS
     version   = "latest"
   }
 }

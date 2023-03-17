@@ -217,7 +217,9 @@ sudo podman build -t webserver .
 ```
 sudo podman tag localhost/webserver:latest <REGISTRY_URL>/<REPOSITORY>:TAG
 sudo podman tag localhost/webserver:latest acrunir.azurecr.io/webapp:latest
+sudo podman tag localhost/webserver:latest acrunir.azurecr.io/webkubernete:latest
 sudo podman tag docker.io/library/mongo:latest acrunir.azurecr.io/mongodb:latest
+sudo podman tag docker.io/mysql:8 acrunir.azurecr.io/mysql:latest
 
 ```
 
@@ -226,7 +228,7 @@ sudo podman tag docker.io/library/mongo:latest acrunir.azurecr.io/mongodb:latest
 11.1 Autenticarse en el ***Registry***
 
 ```
-podman login acrunir.azurecr.io -u acrunir -p L3nu4Vyu4DLMrkMnK27x3NxfhH8MBBn63lGzISfbrP+ACRAOvKTR
+podman login acrunir.azurecr.io -u acrunir -p gNZOs1W5qSWDyohXCO49m1kumBHwzBNo5lEGmTdjwW+ACRCQKogx
 ```
 
 11.2 Subir la imagen del contenedor al ***Registry***
@@ -234,8 +236,12 @@ podman login acrunir.azurecr.io -u acrunir -p L3nu4Vyu4DLMrkMnK27x3NxfhH8MBBn63l
 ```
 sudo podman push <REGISTRY_URL>/<REPOSITORY>:TAG
 podman push acrunir.azurecr.io/webapp:latest
-podman pull acrunir.azurecr.io/webapp:latest
+podman push acrunir.azurecr.io/mysql:latest
+podman push acrunir.azurecr.io/webkubernete:latest
 
+podman pull acrunir.azurecr.io/webapp:latest
+podman pull acrunir.azurecr.io/mysql:latest
+podman pull acrunir.azurecr.io/webkubernete:latest
 
 12. Crear el contenedor del servicio Web a partir de la imagen creada en el paso anterior:
 
