@@ -6,30 +6,69 @@
   vars_files:
     - vars/00_vars.yaml
   tasks:
-    - name: Login to default registry and create ${XDG_RUNTIME_DIR}/containers/auth.json
-      containers.podman.podman_login:
-        username: "{{ username }}"
-        password: "{{ password }}"
-        registry: "{{ registry }}"
 
-    - name: Push an image WebApp
+    - name: Install python3
+      package:
+        name: python3-apt
+        state: present #present absent #latest
+
+    - name: Install podman package
+      become: true
+      shell: curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_20.04/Release.key" | sudo apt-key add -
+    - name: Install podman
+      package:
+        name: podman
+        state: present #present absent #latest
+
+    - name: Install firewalld
+      package:
+        name: firewalld
+        state: present #present absent #latest
+
+    - name: permit traffic on port 8080/tcp
+      ansible.posix.firewalld:
+        port: 8080/tcp
+        permanent: true
+        immediate: true
+        state: enabled
+
+
+    - name: Copying folder into remote home/user
+      become: true 
+      copy:
+        src: "{{ source_image }}"
+        dest: "{{ dest_image }}"
+    
+    - name: Pull httpd image
+      containers.podman.podman_image:
+        name: httpd
+
+    - name: Create & Push image WebApp
       containers.podman.podman_image:
         name: "{{ image_name }}"
         tag:  latest
         push: yes
         pull: no
-        #auth_file: /etc/containers/auth.json
+        path: "{{ dest_image }}"
         username: "{{ username }}"
         password: "{{ password }}"
         push_args:
           dest: "{{ registry }}"
-    - name: Push an image MongoDB
+        
+    - name: Pull image  MySQL 8
       containers.podman.podman_image:
-        name: "{{ image_name_db }}"
+        name: docker.io/library/mysql:8
+
+    - name: Tag image MySQL 8
+      containers.podman.podman_tag:
+        image: docker.io/library/mysql:8
+        target_names: "{{ image_name_db }}"
+      
+    - name: Push image MySQL 8
+      containers.podman.podman_image:
+        name:  "{{ image_name_db }}"
         tag: latest
         push: yes
-        pull: no
-        #auth_file: /etc/containers/auth.json
         username: "{{ username }}"
         password: "{{ password }}"
         push_args:

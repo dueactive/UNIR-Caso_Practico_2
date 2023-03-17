@@ -1,6 +1,12 @@
-username: 'acrunir'
-package: 'podman'
-password: 'L3nu4Vyu4DLMrkMnK27x3NxfhH8MBBn63lGzISfbrP+ACRAOvKTR'
+#acr
+username: 'acrunir' #usuario acr
+password: 'UbprSl1Fb5uKEESM1GcwHR43Ta1rLdB+hCrWAIFr+Q+ACRB3DE9k' #pwd acr
 registry: 'acrunir.azurecr.io'
+#package
+package: 'podman'
+#images
 image_name: 'acrunir.azurecr.io/webapp'
-image_name_db: 'acrunir.azurecr.io/mongodb'
+image_name_db: 'acrunir.azurecr.io/mysql'
+#paths
+source_image: /Users/joseignacio/Desktop/Development13thSoft/DevOps-UNIR/UNIR_Caso_Practico_2/webApp/
+dest_image: /home/azureuser/webApp/

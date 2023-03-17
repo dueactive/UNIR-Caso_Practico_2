@@ -1,15 +1,18 @@
-k8s_namespace: "casopractico2-UNIR"
+k8s_namespace: "casopractico2-kubernetes"
 directorio_trabajo: "/tmp"
 aplicacion:
-  definicion: "stateless.yaml"
+  definicion: "stateless-mysql.yaml"
   databases:
-    nombre: app-mongodb
-    imagen: acrunir.azurecr.io/mongodb:latest
+    nombre: mysql
+    imagen: acrunir.azurecr.io/mysql:latest
     replicas: 1
     recursos:
-      cpu: 100m
-      memoria: 128Mi
+      cpu: 500m
+      memoria: 500Mi
     limites:
-      cpu: 250m
-      memoria: 256Mi
-    puerto: 27017
+      cpu: 1
+      memoria: 1Gi
+    puerto: 3306
+
+
+    

@@ -1,0 +1,16 @@
+k8s_namespace: "casopractico2-kubernetes"
+directorio_trabajo: "/tmp"
+aplicacion:
+  definicion: "stateless-webkubernte.yaml"
+  frontend:
+    nombre: webkubernete
+    imagen: acrunir.azurecr.io/webapp:latest
+    replicas: 1
+    recursos:
+      cpu: 100m
+      memoria: 128Mi
+    limites:
+      cpu: 250m
+      memoria: 256Mi
+    puerto: 8080
+    

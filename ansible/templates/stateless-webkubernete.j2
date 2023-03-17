@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ aplicacion.frontend.nombre }}"
+  namespace: "{{ k8s_namespace }}"
+spec:
+  replicas: {{ aplicacion.frontend.replicas }}
+  selector:
+    matchLabels:
+      app: "{{ aplicacion.frontend.nombre }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ aplicacion.frontend.nombre }}"
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+        - name: "{{ aplicacion.frontend.nombre }}"
+          image: "{{ aplicacion.frontend.imagen }}"
+          resources:
+            requests:
+              cpu: "{{ aplicacion.frontend.recursos.cpu }}"
+              memory: "{{ aplicacion.frontend.recursos.memoria }}"
+            limits:
+              cpu: "{{ aplicacion.frontend.limites.cpu }}"
+              memory: "{{ aplicacion.frontend.limites.memoria }}"
+          ports:
+            - containerPort: {{ aplicacion.frontend.puerto }}
+          volumeMounts:
+            - name: web-persistent-storage
+              mountPath: /var/lib/webapp
+      volumes:
+        - name: web-persistent-storage
+          persistentVolumeClaim:
+            claimName: web-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ aplicacion.frontend.nombre }}"
+  namespace: "{{ k8s_namespace }}"
+spec:
+  selector:
+    app: "{{ aplicacion.frontend.nombre }}"
+  ports:
+    - port: 8080
+      targetPort: 443
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: web-pv-claim
+  namespace: "{{ k8s_namespace }}"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---

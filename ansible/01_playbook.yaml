@@ -10,7 +10,6 @@
       containers.podman.podman_image:
           name: "{{ image_name }}"
           tag: latest
-          #auth_file: /etc/containers/auth.json
           pull: yes
           username: "{{ username }}"
           password: "{{ password }}"

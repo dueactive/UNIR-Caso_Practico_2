@@ -1,0 +1,127 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secret
+  namespace: "{{ k8s_namespace }}"
+type: Opaque
+data:
+  MYSQL_ROOT_PASSWORD: cGFzc3dvcmQ= #password
+  MYSQL_USER: dGVzdHVzZXI= #testuser
+  MYSQL_PASSWORD: dGVzdDEyMw== #test123
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ aplicacion.databases.nombre }}"
+  namespace: "{{ k8s_namespace }}"
+  labels:
+    app: "{{ aplicacion.databases.nombre }}"
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: "{{ aplicacion.databases.nombre }}"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  namespace: "{{ k8s_namespace }}"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ aplicacion.databases.nombre }}"
+  namespace: "{{ k8s_namespace }}"
+  labels:
+    app: "{{ aplicacion.databases.nombre }}"
+spec:
+  selector:
+    matchLabels:
+      app: "{{ aplicacion.databases.nombre }}"
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: "{{ aplicacion.databases.nombre }}"
+    spec:
+      containers:
+        - image: "{{ aplicacion.databases.imagen }}"
+          name: "{{ aplicacion.databases.nombre }}"
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+            requests:
+              memory: "500Mi"
+              cpu: "500m"
+          env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config
+                  key: MYSQL_DATABASE
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_PASSWORD
+          ports:
+            - containerPort: 3306
+              name: "{{ aplicacion.databases.nombre }}"
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
+        - name: initdb
+          configMap:
+            name: mysql-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ aplicacion.databases.nombre }}"
+  namespace: "{{ k8s_namespace }}"
+spec:
+  selector: 
+    app: "{{ aplicacion.databases.nombre }}"
+  #type: NodePort 
+  type: LoadBalancer  
+  ports:
+    - port: 3306
+      targetPort: 3306
+      #nodePort: 30013
+---      
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: "{{ k8s_namespace }}"
+data:
+  MYSQL_DATABASE: webunir
+  MYSQL_DATABASE_URL: jdbc:mysql://mysql/webunir
+  initdb.sql: |
+    USE webunir;
+    CREATE TABLE `user` (`id` int NOT NULL AUTO_INCREMENT, `email` varchar(255) NOT NULL, `name` varchar(255) NOT NULL, `username` varchar(255) NOT NULL, `password` varchar(255) NOT NULL, `empresa` varchar(255) NOT NULL, `activo` boolean NOT NULL, `hash` varchar(255), PRIMARY KEY (`id`), UNIQUE KEY `uk_user_username` (`username`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

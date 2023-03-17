@@ -1,12 +1,12 @@
 ---
-- name: 'Deploy MySQL image + Kubernetes'
+- name: 'Deploy WebKubernete image + Kubernetes'
   hosts: localhost
   vars_files:
-    - vars/01_vars.yaml
+    - vars/02_vars.yaml
   tasks:
     - name: 'Definir los objectos deployment y servicios'
       template:
-        src: templates/stateless-mysql.j2
+        src: templates/stateless-webkubernete.j2
         dest: "{{ directorio_trabajo }}/{{ aplicacion.definicion }}"
 
     - name: 'Crear el namespace de trabajo'
